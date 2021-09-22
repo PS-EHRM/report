@@ -86,30 +86,40 @@ class Home extends CI_Controller {
 		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 		$html = "";
 		$title = "";
+		$file_name = "ehrm_report.pdf";		
+		$temp_date = strtotime(date('Y-m-d'));
 		if($_GET['r']=='employee-information'){
 			$data['details'] = $this->report_model->getEmployeeData();
 			$html =  $this->load->view('home/employee_information_pdf',$data,TRUE);
-			$title = "Employee Information";
+			$title = "Employee Information Report";
+			$file_name = "employee-information".$temp_date.".pdf";
 		}else if($_GET['r']=='pension-notification'){
 			$birthyear = date('Y-m-d', strtotime('-58 year'));
 			$data['details'] = $this->report_model->getpensionNotification($birthyear);
 			$html =  $this->load->view('home/pension_notification_pdf',$data,TRUE);
-			$title = "Pension Notification";
+			$title = "Pension Notification Report (age above 58 years) - ".date('Y-m-d');
+			$temp_date = date('Y-m-d');
+			$file_name = "pension-notification".$temp_date.".pdf";
 		}else if($_GET['r']=='employee-entitle'){
 			$year = date('Y');
 			$data['details'] = $this->report_model->employeeEntitle($year);
 			$html =  $this->load->view('home/employee_entitle_pdf',$data,TRUE);
 			$title = "Employee Entitle";
+			$temp_date = date('Y-m-d');
+			$file_name = "employee-entitle".$temp_date.".pdf";
 		}else if($_GET['r']=='employee-gender'){
 			$gender = !empty($_GET['gender']) ? $_GET['gender'] : 0;
 			$data['details'] = $this->report_model->employeeGender($gender);
 			$html =  $this->load->view('home/employee_gender_pdf',$data,TRUE);
 			$title = "Employee Gender";
+			$temp_date = date('Y-m-d');
+			$file_name = "employee-gender".$temp_date.".pdf";
 		}else if($_GET['r']=='employee-branch'){
 			$branch = !empty($_GET['branch']) ? $_GET['branch'] : 0;
 			$data['details'] = $this->report_model->employeeBranch($branch);
 			$html =  $this->load->view('home/employee_branch_pdf',$data,TRUE);
 			$title = "Employee Branch";
+			$file_name = "employee-branch".$temp_date.".pdf";
 		}else if($_GET['r']=='employee-age-summary'){
 			$start = !empty($_GET['start']) ? $_GET['start'] : 100;
 			$end = !empty($_GET['end']) ? $_GET['end'] : 0;
@@ -118,17 +128,20 @@ class Home extends CI_Controller {
 			$data['details'] = $this->report_model->getemployeeAgeSummary($start,$end);
 			$html =  $this->load->view('home/employee_age_summary_pdf',$data,TRUE);
 			$title = "Employee Age Summary";
+			$file_name = "employee-age-summary".$temp_date.".pdf";
 		}else if($_GET['r']=='employee-birthday'){
 			$month = !empty($_GET['month']) ? $_GET['month'] : date('m');
 			$data['details'] = $this->report_model->getemployeeBirthday($month);
 			$html =  $this->load->view('home/employee_birthday_summary_pdf',$data,TRUE);
 			$title = "Employee Birthday Summary";
+			$file_name = "employee-birthday".$temp_date.".pdf";
 		}else if($_GET['r']=='language-wise-summary'){
 			$language = !empty($_GET['language']) ? $_GET['language'] : "";
 			$type = !empty($_GET['type']) ? $_GET['type'] : "";
 			$data['details'] =  $this->report_model->gelanguageWiseSummary($language,$type);
 			$html =  $this->load->view('home/employee_language_summary_pdf',$data,TRUE);
 			$title = "Employee Language Skill Summary";
+			$file_name = "language-wise-summary".$temp_date.".pdf";
 		}else if($_GET['r']=='employee-confirmation'){
 
 			$start = !empty($_GET['start']) ? $_GET['start'] : date('Y-m-d',strtotime(date('Y-01-01')));
@@ -137,6 +150,7 @@ class Home extends CI_Controller {
 			$data['details'] = $this->report_model->employeeConfirmation($start,$end);
 			$html =  $this->load->view('home/employee_confirmation_pdf',$data,TRUE);
 			$title = "Employee Confirmation Summary";
+			$file_name = "employee-confirmation".$temp_date.".pdf";
 		}else if($_GET['r']=='upcoming-confirmation'){
 
 			$start = !empty($_GET['start']) ? $_GET['start'] : date('Y-m-d',strtotime(date('Y-01-01')));
@@ -145,6 +159,7 @@ class Home extends CI_Controller {
 			$data['details'] = $this->report_model->employeeConfirmation($start,$end);
 			$html =  $this->load->view('home/upcoming_confirmation_pdf',$data,TRUE);
 			$title = "Employee Upcoming Confirmation Summary";
+			$file_name = "upcoming-confirmation".$temp_date.".pdf";
 		}else if($_GET['r']=='increment-report'){
 
 			$input_month = !empty($_GET['month']) ? $_GET['month'] : date('Y-m');
@@ -155,6 +170,7 @@ class Home extends CI_Controller {
 			$data['details'] = $this->report_model->employeeincrementReport($start,$end);
 			$html =  $this->load->view('home/upcoming_confirmation_pdf',$data,TRUE);
 			$title = "Increment Report";
+			$file_name = "increment-report".$temp_date.".pdf";
 		}else if($_GET['r']=='leave-details'){
 
 			$start = !empty($_GET['start']) ? $_GET['start'] : date('Y-m-d',strtotime(date('Y-01-01')));
@@ -163,6 +179,7 @@ class Home extends CI_Controller {
 			$data['details'] = $this->report_model->leaveDetails($start,$end);
 			$html =  $this->load->view('home/leave_details_pdf',$data,TRUE);
 			$title = "Leave Details";
+			$file_name = "leave-details".$temp_date.".pdf";
 		}else if($_GET['r']=='employee-information-by-designation'){
 			$search = [];
 			$designation = !empty($_GET['designation']) ? $_GET['designation'] : '';
@@ -173,6 +190,7 @@ class Home extends CI_Controller {
 			
 			$html =  $this->load->view('home/employee_information_by_desi_pdf',$data,TRUE);
 			$title = "Employee Information by Designation";
+			$file_name = "employee-information-by-designation".$temp_date.".pdf";
 		}else if($_GET['r']=='employee-information-by-service'){
 			$search = [];
 			$designation = !empty($_GET['designation']) ? $_GET['designation'] : '';
@@ -184,12 +202,14 @@ class Home extends CI_Controller {
 			
 			$html =  $this->load->view('home/employee_information_by_service_pdf',$data,TRUE);
 			$title = "Employee Information by Designation";
+			$file_name = "employee-information-by-service".$temp_date.".pdf";
 		}else if($_GET['r']=='promoted-list'){
 			
 			$data['details'] = $this->report_model->getpromotedList();
 			
 			$html =  $this->load->view('home/promoted_list_pdf',$data,TRUE);
 			$title = "Employee Promoted List";
+			$file_name = "employee_promoted_list".$temp_date.".pdf";
 		}
 		
 
@@ -242,12 +262,12 @@ class Home extends CI_Controller {
 		
 
 		// output the HTML content
-		$pdf->writeHTML($html, true, false, true, false, '');
+		$pdf->writeHTML($html, true, false, true, false, 'L');
 
 
  
 		//Close and output PDF document
-		$pdf->Output('example_006.pdf', 'I');
+		$pdf->Output($file_name, 'I');
 	}
 
 	
@@ -279,10 +299,10 @@ class Home extends CI_Controller {
 		$data['search'] = "&start=".$start."&end=".$end;
 
 
-		$start =  date('Y-m-d', strtotime('-'.$end.' year'));
-		$end = date('Y-m-d', strtotime('-'.$start.' year'));
+		$end_q = date('Y-m-d', strtotime('-'.$start.' year'));
+		$start_q =  date('Y-m-d', strtotime('-'.$end.' year'));
 		//echo $start."-".$end;die();
-		$data['details'] = $this->report_model->getemployeeAgeSummary($start,$end);
+		$data['details'] = $this->report_model->getemployeeAgeSummary($start_q,$end_q);
 		
 		
 
@@ -405,7 +425,6 @@ class Home extends CI_Controller {
 		
 		//echo $start."-".$end;die();
 		$data['details'] = $this->report_model->leaveDetails($start,$end);
-
 		$this->load->view('common/header_view',$data_h);
 		$this->load->view('home/leave_details',$data);
 		$this->load->view('common/footer_view');

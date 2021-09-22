@@ -38,8 +38,8 @@
                                         foreach($leaves as $leave){
                                             echo "<p><b>".$leave['leave_type_name']."</b>\n";
                                             echo "Total : ".$leave['leave_ent_day']."\n";
-                                            echo "Taken : ".$leave['leave_ent_day']."\n";
-                                            echo "Remain : ".$leave['leave_ent_day']."\n</p>";
+                                            echo "Taken : ".$leave['leave_ent_taken']."\n";
+                                            echo "Remain : ".$leave['leave_ent_remain']."\n</p>";
                                         }
                                     ?>
                                 </td>

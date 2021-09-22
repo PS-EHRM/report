@@ -4,13 +4,14 @@ class Report_model extends CI_Model {
     public function getEmployeeData($data = [])
     {
         $query = $this->db->select('employee_id,emp_firstname,emp_lastname,emp_birthday,
-            title,jobtit_name,service_name
+            title,jobtit_name,service_name,hs_hr_employee.gender_code,gender_name
             ')
             ->where($data)
             ->from('hs_hr_employee')
             ->join('hs_hr_compstructtree', 'hs_hr_employee.work_station = hs_hr_compstructtree.comp_code', 'left')
             ->join('hs_hr_job_title', 'hs_hr_employee.job_title_code = hs_hr_job_title.jobtit_code', 'left')
             ->join('hs_hr_service', 'hs_hr_employee.service_code = hs_hr_service.service_code', 'left')
+            ->join('hs_hr_gender', 'hs_hr_employee.gender_code = hs_hr_gender.gender_code', 'left')
             ->get();
         return $query->result();
     }
@@ -42,12 +43,12 @@ class Report_model extends CI_Model {
             ')
             ->where($data)
             ->where("emp_birthday <= '".$date."'")
-            ->where("emp_birthday != '0000-00-00'")
+            ->where("emp_birthday != '1970-01-01'")
             ->from('hs_hr_employee')
             ->join('hs_hr_compstructtree', 'hs_hr_employee.work_station = hs_hr_compstructtree.comp_code', 'left')
             ->join('hs_hr_job_title', 'hs_hr_employee.job_title_code = hs_hr_job_title.jobtit_code', 'left')
             ->join('hs_hr_service', 'hs_hr_employee.service_code = hs_hr_service.service_code', 'left')
-            ->order_by('emp_birthday')
+            ->order_by('emp_birthday','DESC')
             ->get();
         return $query->result();
     }
@@ -120,17 +121,18 @@ class Report_model extends CI_Model {
     public function getemployeeAgeSummary($start,$end,$data = [])
     {
         $query = $this->db->select('employee_id,emp_firstname,emp_lastname,emp_birthday,
-            title,jobtit_name,service_name
+            title,jobtit_name,service_name,hs_hr_employee.gender_code,gender_name
             ')
             ->where($data)
             ->where("emp_birthday >= '".$start."'")
             ->where("emp_birthday <= '".$end."'")
-            ->where("emp_birthday != '0000-00-00'")
+            ->where('emp_birthday is NOT NULL', NULL, FALSE)
             ->from('hs_hr_employee')
             ->join('hs_hr_compstructtree', 'hs_hr_employee.work_station = hs_hr_compstructtree.comp_code', 'left')
             ->join('hs_hr_job_title', 'hs_hr_employee.job_title_code = hs_hr_job_title.jobtit_code', 'left')
             ->join('hs_hr_service', 'hs_hr_employee.service_code = hs_hr_service.service_code', 'left')
-            ->order_by('emp_birthday')
+            ->join('hs_hr_gender', 'hs_hr_employee.gender_code = hs_hr_gender.gender_code', 'left')
+            ->order_by('emp_birthday','DESC')
             ->get();
         return $query->result();
     }
@@ -138,15 +140,16 @@ class Report_model extends CI_Model {
     public function getemployeeBirthday($month,$data = [])
     {
         $query = $this->db->select('employee_id,emp_firstname,emp_lastname,emp_birthday,
-            title,jobtit_name,service_name
+            title,jobtit_name,service_name,hs_hr_employee.gender_code,gender_name
             ')
             ->where($data)
             ->where('DATE_FORMAT(emp_birthday,"%m")',$month)
-            ->where("emp_birthday != '0000-00-00'")
+            ->where("emp_birthday != '1970-01-01'")
             ->from('hs_hr_employee')
             ->join('hs_hr_compstructtree', 'hs_hr_employee.work_station = hs_hr_compstructtree.comp_code', 'left')
             ->join('hs_hr_job_title', 'hs_hr_employee.job_title_code = hs_hr_job_title.jobtit_code', 'left')
             ->join('hs_hr_service', 'hs_hr_employee.service_code = hs_hr_service.service_code', 'left')
+            ->join('hs_hr_gender', 'hs_hr_employee.gender_code = hs_hr_gender.gender_code', 'left')
             ->order_by('emp_birthday')
             ->get();
         return $query->result();
@@ -192,7 +195,7 @@ class Report_model extends CI_Model {
             ->where($data)
             ->where("emp_confirm_date >= '".$start."'")
             ->where("emp_confirm_date <= '".$end."'")
-            ->where("emp_confirm_date != '0000-00-00'")
+            ->where("emp_confirm_date != '1970-01-01'")
             ->from('hs_hr_employee')
             ->join('hs_hr_compstructtree', 'hs_hr_employee.work_station = hs_hr_compstructtree.comp_code', 'left')
             ->join('hs_hr_job_title', 'hs_hr_employee.job_title_code = hs_hr_job_title.jobtit_code', 'left')
@@ -212,7 +215,7 @@ class Report_model extends CI_Model {
             ->where($data)
             ->where("emp_salary_inc_date >= '".$start."'")
             ->where("emp_salary_inc_date <= '".$end."'")
-            ->where("emp_salary_inc_date != '0000-00-00'")
+            ->where("emp_salary_inc_date != '1970-01-01'")
             ->from('hs_hr_employee')
             ->join('hs_hr_compstructtree', 'hs_hr_employee.work_station = hs_hr_compstructtree.comp_code', 'left')
             ->join('hs_hr_job_title', 'hs_hr_employee.job_title_code = hs_hr_job_title.jobtit_code', 'left')
@@ -232,7 +235,7 @@ class Report_model extends CI_Model {
             ->where($data)
             ->where("leave_app_start_date >= '".$start."'")
             ->where("leave_app_start_date <= '".$end."'")
-            ->where("leave_app_start_date != '0000-00-00'")
+            ->where("leave_app_start_date != '1970-01-01'")
             ->from('hs_hr_leave_application')
             ->join('hs_hr_employee', 'hs_hr_employee.emp_number = hs_hr_leave_application.emp_number', 'left')
             ->join('hs_hr_compstructtree', 'hs_hr_employee.work_station = hs_hr_compstructtree.comp_code', 'left')
